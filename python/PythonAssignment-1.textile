@@ -1,0 +1,169 @@
+## Assignment Part-1
+Q1. Why do we call Python as a general purpose and high-level programming language?
+
+sol:it’s highly readable by humans. it’s so close to the English language.
+
+Q2. Why is Python called a dynamically typed language?
+sol: Python is a dynamically typed language. It doesn’t know about the type of the variable until the code is run. So declaration is of no use.It stores that value at some memory location and then binds that variable name to that memory container.
+
+Q3. List some pros and cons of Python programming language?
+sol:
+Pros:Simple and Easy,Easy to code,Readable,Object-oriented,Free and Open Source,Less Coding,Portable,Interpreted.
+cons:Speed limitations,Large memory consumption,Not suitable for Mobile,Design restrictions,Weak database access layers,Weak database access layers,Difficult to test.   
+
+Q4. In what all domains can we use Python?
+sol:Web Development,Networking and Internet Development,Machine Learning,Scientific Computation.
+
+
+Q5. What are variable and how can we declare them?
+sol:variables are containers for storing data.
+a =5
+skmr="kumar"
+
+
+Q6. How can we take an input from the user in Python?
+
+a = input()#general input accepts all types of datatypes.
+
+a=int(input())#instead of int we can replace str,float and boolean.
+
+a = input("give any input:").split(" ")#split input by space
+
+a = map(int,input().split())#we can change the int to specify or intialize any other data structures
+
+n=int(input())
+a=list(map(int,input().strip().split()))[:n]#input of list in Python
+
+Q7. What is the default datatype of the value that has been taken as an input using input() function?
+sol:string data type.
+
+Q8. What is type casting?
+sol:Type Casting is the method to convert the variable data type into a certain data type in order to the operation required to be performed by users.
+
+Q9. Can we take more than one input from the user using single input() function? If yes, how? If no, why?
+
+sol:yes,The split() method is useful for getting multiple inputs from users.
+n=int(input())
+a=list(map(int,input().strip().split()))[:n]
+
+
+Q10. What are keywords?
+sol: Python language also reserves some keywords that convey special meaning. Keywords cannot be used as a variable name in the program snippet.
+False, elif, lambda, None, else, nonlocal, True, except, not, and, finally, or, as, for, pass, assert, from, raise, break, global, return, class, if, try, continue, import, while ,def, in, with, del is, yield
+ 
+Q11. Can we use keywords as a variable? Support your answer with reason.
+sol:No,We cannot use a keyword as a variable name, function name or any other identifier. They are used to define the syntax and structure of the Python language. In Python, keywords are case sensitive.
+Q12. What is indentation? What's the use of indentaion in Python?
+
+Q13. How can we throw some output in Python?
+sol:In Python, we use the print () function to output data to the screen
+Q14. What are operators in Python?
+sol:Python Operators in general are used to perform operations on values and variables.
+Arithmetic Operators(+,-,*,/,//,%,**)
+Comparison Operators(<,>,==,!=,>=,<=,is,is not)
+Logical Operators(and,or,not)
+Bitwise Operators(&,^,|,~,>>,<<)
+Assignment Operators(=,+=,-=,*=,/=,%=,//=,**=,&=,|=,^=,>>=,<<=)
+Identity Operators(is,is not)
+Membership Operators(in,not in)
+Q15. What is difference between / and // operators?
+The difference between // and / is that // performs floor division, and / performs floating point division.
+Q16. Write a code that gives following as an output
+print("iNeuroniNeuroniNeuroniNeuron")
+
+```
+iNeuroniNeuroniNeuroniNeuron
+```
+
+Q17. Write a code to take a number as an input from the user and check if the number is odd or even.
+a = int(input())
+if a // 2=0:
+print("even")
+else:
+print("Odd")
+
+Q18. What are boolean operator?
+sol:True or False
+
+Q19. What will the output of the following?
+```
+1 or 0 = 1
+
+0 and 0 = 0
+
+True and False and True = False
+
+1 or 0 or 0 = 1
+```
+
+Q20. What are conditional statements in Python?
+sol:if
+if
+else
+if
+elif
+else are conditional statements.
+
+Q21. What is use of 'if', 'elif' and 'else' keywords?
+sol:
+The if keyword is a control flow statement which enables us to execute a part of the software script only when a certain condition is satisfied.
+
+The elif keyword is shorthand for else if. This keyword is used in conjunction with if statements. The keyword is effectively an evaluation method that asks the question - if the previous conditions were not true, then try this new condition. Then if that new condition is met the code executes this particular true branch of the software program. 
+
+The else keyword catches anything which is not caught by the preceding conditions. This keyword is used in conjunction with if statements. The else statements can also be used with all logical comparison operators. These are logical conditions or conditional expressions. 
+
+Q22. Write a code to take the age of person as an input and if age >= 18 display "I can vote". If age is < 18 display "I can't vote".
+
+a = int(input())
+if (a>=18):
+print("I can vote")
+else (a<18):
+print("I can't vote")
+Q23. Write a code that displays the sum of all the even numbers from the given list.
+```
+numbers = [12, 75, 150, 180, 145, 525, 50]
+```
+print(sum(numbers))
+
+def sum(a):
+for i in range(a):
+i=i+i
+print(i)
+
+
+Q24. Write a code to take 3 numbers as an input from the user and display the greatest no as output.
+
+sol:
+num1 = float(input("Enter first number: "))
+num2 = float(input("Enter second number: "))
+num3 = float(input("Enter third number: "))
+
+if (num1 >= num2) and (num1 >= num3):
+   largest = num1
+elif (num2 >= num1) and (num2 >= num3):
+   largest = num2
+else:
+   largest = num3
+
+print("The largest number is", largest)
+
+Q25. Write a program to display only those numbers from a list that satisfy the following conditions
+
+- The number must be divisible by five
+
+- If the number is greater than 150, then skip it and move to the next number
+
+- If the number is greater than 500, then stop the loop
+```
+numbers = [12, 75, 150, 180, 145, 525, 50]
+```
+sol:numbers = [12, 75, 150, 180, 145, 525, 50]
+
+for item in numbers:
+    if item > 500:
+        break
+    elif item > 150:
+        continue
+    
+    elif item % 5 == 0:
+        print(item)
