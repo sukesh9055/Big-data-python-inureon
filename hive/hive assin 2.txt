@@ -1,0 +1,158 @@
+1)Will the reducer work or not if you use “Limit 1” in any HiveQL query?
+
+sol)Reducer will not run if we use limit in select clause.If your query is a simple select query then no reducers are called.
+If your query has something like aggregation along with group by or order by and lets say you are using MR as your execution engine then reducers will be called.
+If you are using Tez as your execution engine then reducers will most likely not be called because Tez uses a cost bases query optimizer which will try to do things in the map phase itself if the dataset is small and pertaining that there are no joins.
+
+2)Suppose I have installed Apache Hive on top of my Hadoop cluster using default metastore configuration. Then, what will happen if we have multiple clients trying to access Hive at the same time? 
+
+sol)The default metastore configuration allows only one Hive session to be opened at a time for accessing the metastore. Therefore, if multiple clients try to access the metastore at the same time, they will get an error. One has to use a standalone metastore, i.e. Local or remote metastore configuration in Apache Hive for allowing access to multiple clients concurrently.
+
+
+3)Suppose, I create a table that contains details of all the transactions done by the customers: CREATE TABLE transaction_details (cust_id INT, amount FLOAT, month STRING, country STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘,’ ;
+Now, after inserting 50,000 records in this table, I want to know the total revenue generated for each month. But, Hive is taking too much time in processing this query. How will you solve this problem and list the steps that I will be taking in order to do so?
+
+1. Create a partitioned table:
+CREATE TABLE partitioned_transaction (cust_id INT, amount FLOAT, country STRING) PARTITIONED BY (month STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘,’ ; 
+
+2. Enable dynamic partitioning in Hive:
+
+SET hive.exec.dynamic.partition = true;
+
+SET hive.exec.dynamic.partition.mode = nonstrict;
+
+3. Transfer the data from the non – partitioned table into the newly created partitioned table:
+
+INSERT OVERWRITE TABLE partitioned_transaction PARTITION (month) SELECT cust_id, amount, country, month FROM transaction_details;
+
+4. How can you add a new partition for the month December in the above partitioned table?
+
+ALTER TABLE partitioned_transaction ADD PARTITION (month=’Dec’) LOCATION  ‘/partitioned_transaction’;
+
+5&6. I am inserting data into a table based on partitions dynamically. But, I received an error – FAILED ERROR IN SEMANTIC ANALYSIS: Dynamic partition strict mode requires at least one static partition column. How will you remove this error?
+
+sol)
+SET hive.exec.dynamic.partition = true;
+
+SET hive.exec.dynamic.partition.mode = nonstrict;
+
+7. How will you consume this CSV file into the Hive warehouse using built SerDe?
+
+SerDe stands for serializer/deserializer. A SerDe allows us to convert the unstructured bytes into a record that we can process using Hive. SerDes are implemented using Java. Hive comes with several built-in SerDes and many other third-party SerDes are also available. 
+
+Hive provides a specific SerDe for working with CSV files. 
+
+CREATE EXTERNAL TABLE sample
+
+(id int, first_name string, 
+
+last_name string, email string,
+
+gender string, ip_address string) 
+
+ROW FORMAT SERDE ‘org.apache.hadoop.hive.serde2.OpenCSVSerde’ 
+
+STORED AS TEXTFILE LOCATION ‘/temp’;
+
+8.Suppose, I have a lot of small CSV files present in /input directory in HDFS and I want to create a single Hive table corresponding to these files. The data in these files are in the format: {id, name, e-mail, country}. Now, as we know, Hadoop performance degrades when we use lots of small files.
+
+So, how will you solve this problem where we want to create a single Hive table for lots of small files without degrading the performance of the system?
+
+sol)
+One can use the SequenceFile format which will group these small files together to form a single sequence file. The steps that will be followed in doing so are as follows:
+
+Create a temporary table:
+CREATE TABLE temp_table (id INT, name STRING, e-mail STRING, country STRING)
+
+ROW FORMAT FIELDS DELIMITED TERMINATED BY ‘,’ STORED AS TEXTFILE;
+
+Load the data into temp_table:
+LOAD DATA INPATH ‘/input’ INTO TABLE temp_table;
+
+Create a table that will store data in SequenceFile format:
+CREATE TABLE sample_seqfile (id INT, name STRING, e-mail STRING, country STRING)
+
+ROW FORMAT FIELDS DELIMITED TERMINATED BY ‘,’ STORED AS SEQUENCEFILE;
+
+Transfer the data from the temporary table into the sample_seqfile table:
+INSERT OVERWRITE TABLE sample SELECT * FROM temp_table;
+
+Hence, a single SequenceFile is generated which contains the data present in all of the input files and therefore, the problem of having lots of small files is finally eliminated.
+
+9. LOAD DATA LOCAL INPATH ‘Home/country/state/’
+OVERWRITE INTO TABLE address;
+
+The following statement failed to execute. What can be the cause?
+
+sol)there is no specific file name in that load command.
+
+
+
+10. Is it possible to add 100 nodes when we already have 100 nodes in Hive? If yes, how?
+yes,
+Step 1: Take a new system; create a new username and password
+Step 2: Install SSH and with the master node setup SSH connections
+Step 3: Add ssh public_rsa id key to the authorized keys file
+Step 4: Add the new DataNode hostname, IP address, and other details in /etc/hosts slaves file:
+
+192.168.1.102 slave3.in slave3
+Step 5: Start the DataNode on a new node
+Step 6: Login to the new node like suhadoop or:
+
+ssh -X hadoop@192.168.1.103
+Step 7: Start HDFS of the newly added slave node by using the following command:
+
+./bin/hadoop-daemon.sh start data node
+Step 8: Check the output of the jps command on the new node
+
+####################################################################################
+                           Hive Practical questions:
+####################################################################################
+
+Create a  table named CUSTOMERS(ID | NAME | AGE | ADDRESS   | SALARY)
+Create a Second  table ORDER(OID | DATE | CUSTOMER_ID | AMOUNT)
+
+Now perform different joins operations on top of these tables
+(Inner JOIN, LEFT OUTER JOIN ,RIGHT OUTER JOIN ,FULL OUTER JOIN)
+
+create database hive_assign;
+
+use hive_assign;
+
+
+create table if not exists CUSTOMERS( id int,name string,age int,address string,salary int) row format delimited fields terminated by ',';
+
+create table order_details( order_id int,date_in date,customer_id int,amount int ) row format delimited fields terminated by ',';
+
+load data local inpath '/config/workspace/hive assignment/order.csv' into table order_details;
+
+load data local inpath '/config/workspace/hive assignmmet/customers.csv' into table CUSTOMERS;
+
+select * from order_details;
+
+select * from CUSTOMERS;
+
+
+SET hive.cli.print.header=true;
+
+select name,sum(salary) as salary_credited from customers group by name;
+
+select name,sum(salary) as Salary_credited,case when sum(salary) <= 500 then 'average_salaried_person' when sum(salary) between 500 and 800  then 'Normal_salaried' else 'upper_salaried' end from customers group by name;
+
+select order_id,customer_id,coalesce(amount,0) as Amount from order_details;
+
+select if(amount=100,1,0) as centuried_person,customer_id from order_details group by if(amount=100,1,0),customer_id;
+
+select * from order_details limit 3;
+
+select * from customers where name = Ajay;
+
+select * from customers where age in (22,23,27);
+
+select * from customers where age not in (22,23,27);
+
+select distinct c.name,c.address from customers c join order_details od where c.id=od.customer_id order by name ;
+
+select * from customers where name like 'R%';
+
+alter table customers rename to customer_details;
